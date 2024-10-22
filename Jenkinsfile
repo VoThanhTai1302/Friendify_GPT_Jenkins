@@ -1,23 +1,27 @@
 pipeline {
-   agent { docker { image 'mcr.microsoft.com/playwright:v1.48.1-noble' } }
-   stages {
-      stage('has title') {
-         steps {
-            sh 'npm ci'
-            sh 'npx playwright test'
-         }
-      }stage('get started link') {
-         steps {
-            sh 'npm ci'
-            sh 'npx playwright test'
-         }
-      }
-      stage('Login with email') {
-         steps {
-            sh 'npm ci'
-            sh 'npx playwright test'
-         }
-      }
+    agent any
 
-   }
+    stages {
+        stage('Install Dexpendencies') {
+            steps {
+                sh 'npm install'
+                sh 'npx playwright install'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'npx playwright test'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "All tests passed. Build status: ${currentBuild.result}"
+        }
+        failure {
+            echo "Some tests failed. Build status: ${currentBuild.result}"
+        }
+    }
 }
